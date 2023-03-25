@@ -47,7 +47,7 @@ function cleanEntity(entity) {
   return out.trim();
 }
 
-export async function isCausalLinkBetween(groundingText, entity1, entity2) {
+export async function isCausalLink(groundingText, entity1, entity2) {
   const MACRO_ID = "ZgeYc8ORsdyF7x3Sbo7u";
   const userInputs = {
     "6": groundingText, // [[text]]
@@ -76,11 +76,11 @@ export async function isCausalLinkBetween(groundingText, entity1, entity2) {
   console.log(texts, scores);
 
 
-  const isCausalLink = JSON.parse(message);
-  if (isCausalLink) {
+  const messageBoolean = JSON.parse(message);
+  if (messageBoolean) {
     console.log(`${entity1} --> ${entity2}`);
   } else {
     console.log(`No link between ${entity1} and ${entity2}.`);
   }
-  return isCausalLink;
+  return messageBoolean;
 }
