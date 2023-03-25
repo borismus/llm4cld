@@ -8,3 +8,10 @@ section > * {
   font-family: 'Inconsolata', monospace;
   font-size: 14px;
 }
+
+section textarea {
+  resize: none;
+  height: auto;
+  overflow: hidden;
+  padding: 0;
+}
