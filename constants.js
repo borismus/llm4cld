@@ -1,0 +1,7 @@
+export const GROUNDING = `More peasants had more access to horses, which gave them more mobility. This had several important implications. First, farmers could now get to the market on their own where ordinarily they would be reliant on merchants. Effectively this reduced shipping costs for farmers and made their whole operation more profitable. Further democratizing transportation were improved wagons. Up to now, these had been two wheeled, but by the 13th century, a four wheeled version emerged. Whippletrees allowed multiple animals to pull heavier plows, pivoted front axles greatly increased maneuverability and adequate brakes were increasingly available.
+
+These changes allowed peasants to farm land further from a river — the highway system of the Middle Ages. This in turn meant more farms in the land, and an increase to general carrying capacity. An increase in population is highly associated with prosperous times (the contra positive holds). A second benefit of horse-based mobility were more living options. Now peasants could live in larger towns and ride to their farm every morning to do their day’s work, then return to their town. This increased their prosperity in many ways, giving them access to schools for their children, more power to self-govern via communes, access to culture, pubs, and other amenities found in a Medieval towns.`;
+
+export const INTERESTING_ENTITIES = ['farm profits', 'town size', 'cheap transport', 'peasant prosperity', 'farm yields'];
+
+export const DEFAULT_TEMPERATURE = 0.5;
