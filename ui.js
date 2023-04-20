@@ -11,40 +11,43 @@ const graphEl = document.querySelector('causal-graph');
 
 export function initializeUI() {
   openAiKeyEl.value = OPENAI_KEY;
-  systemDescriptionEl.value = GROUNDING;
+  systemDescriptionEl.innerText = GROUNDING;
   updateEntities(INTERESTING_ENTITIES);
-
-  for (const textareaEl of [systemDescriptionEl, entitiesEl]) {
-    textareaEl.addEventListener('input', e => updateTextareaHeight(e.target));
-  }
-  updateAllTextareaHeights();
 
   cgmlEl.addEventListener('input', renderGraph);
 }
 
-function updateAllTextareaHeights() {
-  for (const textareaEl of [systemDescriptionEl, entitiesEl]) {
-    updateTextareaHeight(textareaEl);
+function setContentEditableLoading(contentEditableEl, isLoading) {
+  if (isLoading) {
+    contentEditableEl.classList.add('anim-border');
+  } else {
+    contentEditableEl.classList.remove('anim-border');
   }
-}
-
-function updateTextareaHeight(textareaEl) {
-  textareaEl.style.height = textareaEl.scrollHeight + 'px';
+  contentEditableEl.setAttribute('contenteditable', !isLoading);
 }
 
 function updateEntities(entityList) {
-  entitiesEl.value = '';
+  entitiesEl.innerText = '';
   for (const entity of entityList) {
-    entitiesEl.value += entity + '\n';
+    entitiesEl.innerText += entity + '\n';
   }
-  updateTextareaHeight(entitiesEl);
+  // Ensure that we don't have trailing newlines.
+  entitiesEl.innerText = entitiesEl.innerText.trim();
 }
 
 function createCGML(links) {
   let cgml = '';
-  for (const {from, to, isOpposite} of links) {
+  for (const {from, to, isOpposite, explanation} of links) {
     const arrow = isOpposite ? 'o->' : '-->';
-    cgml += `${from} ${arrow} ${to}\n`;
+    const relation = `${from} ${arrow} ${to}\n`;
+    if (explanation) {
+      cgml += `// ${explanation}\n`;
+    }
+    cgml += relation;
+    // Add a newline for readability if we've included an explanation.
+    if (explanation) {
+      cgml += '\n'
+    }
   }
   return cgml;
 }
@@ -53,8 +56,7 @@ function updateCGML(cgml) {
   if (!cgml) {
     graphEl.cgml = '';
   }
-  cgmlEl.value = cgml;
-  updateTextareaHeight(cgmlEl);
+  cgmlEl.innerText = cgml;
 
   // Re-render the graph using CGML.js.
   graphEl.cgml = cgml;
@@ -62,28 +64,47 @@ function updateCGML(cgml) {
 
 
 
-window.addEventListener('resize', updateAllTextareaHeights);
-
 // DOM Event handlers.
 window.extractEntities = async () => {
   console.log('extractEntities');
-  const entities = await extractEntities(GROUNDING, 8);
+
+  setContentEditableLoading(entitiesEl, true);
+  const entities = await extractEntities(systemDescriptionEl.innerText, 8);
   updateEntities(entities);
+  setContentEditableLoading(entitiesEl, false);
 };
 
-window.evaluateLinks = async () => {
+let analyser = null;
+async function evaluateLinks() {
   console.log('evaluateLinks');
-  const entities = entitiesEl.value.trim().split('\n');
-  const analyser = new TextAnalyser(GROUNDING);
+  const entities = entitiesEl.innerText.trim().split('\n');
+  analyser = new TextAnalyser(systemDescriptionEl.innerText);
+
+  setContentEditableLoading(cgmlEl, true);
   const links = await analyser.evaluateCausalLinksBetweenEntities(entities, {
     linksCallback: (links) => {
       const cgml = createCGML(links);
       updateCGML(cgml);
     }
   });
+  setContentEditableLoading(cgmlEl, false);
+}
+
+function pauseEvaluatingLinks() {
+  analyser.cancel();
+  analyser = null;
+}
+
+window.toggleEvaluateLinks = (buttonEl) => {
+  const isEvaluatingLinks = (analyser !== null);
+  if (isEvaluatingLinks) {
+    pauseEvaluatingLinks();
+  } else {
+    evaluateLinks();
+  }
 }
 
 window.renderGraph = async () => {
   console.log('renderGraph');
-  graphEl.cgml = cgmlEl.value;
+  graphEl.cgml = cgmlEl.innerText;
 }

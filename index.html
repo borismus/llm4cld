@@ -12,27 +12,31 @@
 </head>
 
 <body>
-  <section id="openai">
-    <label for="openai-key">OpenAI Key</label>
-    <input type="text" id="openai-key" name="openai-key" placeholder="openai key"></input>
-  </section>
+  <div class="left">
+    <section id="openai">
+      <label for="openai-key">OpenAI Key</label>
+      <input type="text" id="openai-key" name="openai-key" placeholder="openai key"></input>
+    </section>
 
-  <section id="description">
-    <textarea id="system-description" placeholder="text description of a complex system"></textarea>
-    <div>
-      <button onclick="extractEntities()">Extract Entities</button>
-    </div>
-  </section>
+    <section id="description">
+      <div contenteditable id="system-description" placeholder="text description of a complex system"></div>
+      <div>
+        <button onclick="extractEntities()">Extract Entities</button>
+      </div>
+    </section>
 
-  <section id="entities">
-    <textarea id="entity-list" placeholder="entities in the system above"></textarea>
-    <div>
-      <button onclick="evaluateLinks()">Evaluate Links</button>
-    </div>
-  </section>
+    <section id="entities">
+      <div contenteditable id="entity-list" placeholder="entities in the system above"></div>
+      <div>
+        <button onclick="toggleEvaluateLinks(this)">Evaluate Links</button>
+      </div>
+    </section>
 
-  <section id="graph">
-    <textarea id="cgml" placeholder="causal graph for the system above"></textarea>
+    <section id="graph">
+      <div contenteditable id="cgml" placeholder="causal graph for the system above"></div>
+    </section>
+  </div>
+  <div class="right">
     <causal-graph noTextarea="true"></causal-graph>
-  </section>
+  </div>
 </body>
