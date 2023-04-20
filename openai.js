@@ -37,11 +37,13 @@ export async function isCausalLink(groundingText, entity1, entity2, {isOpposite 
   return res;
 }
 
-export async function isCausalLinkWithExplanation(groundingText, entity1, entity2) {
-
+export async function explainCausalLink(groundingText, entity1, entity2, {isOpposite = false} = {}) {
+  const prompt = generateExplainLinkPrompt(groundingText, entity1, entity2, isOpposite);
+  const gptRes = await callGPT4(prompt);
+  return gptRes;
 }
 
-export async function callGPT4(prompt, {verbose = false} = {}) {
+export async function callGPT4(prompt, {verbose = true} = {}) {
   if (!prompt) {
     throw new Error(`Prompt required.`);
   }
@@ -85,6 +87,14 @@ function generateCausalNegativeLinkPrompt(groundingText, entity1, entity2) {
   return `Text: ${groundingText}
 
 The text above suggests that more ${entity1} causes less ${entity2}. Answer one of "true" or "false".`;
+}
+
+
+function generateExplainLinkPrompt(groundingText, entity1, entity2, isOpposite) {
+  const adverb = isOpposite ? 'less' : 'more';
+  return `Text: ${groundingText}
+
+The text above suggests that more ${entity1} causes ${adverb} ${entity2}. In one sentence, explain why.`;
 }
 
 function cleanupEntity(ent) {
