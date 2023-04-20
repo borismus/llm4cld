@@ -1,17 +1,85 @@
+body {
+  display: flex;
+  flex-direction: row;
+}
+
+.left {
+  min-width: 300px;
+  max-width: 400px;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.right {
+  width: 100%;
+}
+
 section {
   display: flex;
   flex-direction: column;
   margin-bottom: 1em;
 }
 
-section > * {
+input#openai-key {
+  filter: blur(3px);
+}
+
+section>* {
   font-family: 'Inconsolata', monospace;
   font-size: 14px;
 }
 
-section textarea {
+section [contenteditable] {
   resize: none;
   height: auto;
   overflow: hidden;
-  padding: 0;
+  padding: 8px;
+  border-width: 2px;
+  border-style: solid;
+  /* Weird border animation bug without this. */
+  min-height: 40px;
+}
+
+[contenteditable]:empty:before {
+  content: attr(placeholder);
+  pointer-events: none;
+}
+
+:root {
+  --d: 2500ms;
+  --angle: 90deg;
+  --gradX: 100%;
+  --gradY: 50%;
+  --c1: rgb(0, 251, 255);
+  --c2: rgb(0, 3, 30);
+}
+
+@keyframes borderRotate {
+  100% {
+    --angle: 420deg;
+  }
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 90deg;
+  inherits: true;
+}
+
+@property --gradX {
+  syntax: '<percentage>';
+  initial-value: 50%;
+  inherits: true;
+}
+
+@property --gradY {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: true;
+}
+
+.anim-border {
+  border-width: 5px !important;
+  border-image: conic-gradient(from var(--angle), var(--c2), var(--c1) 0.1turn, var(--c1) 0.15turn, var(--c2) 0.25turn) 30;
+  animation: borderRotate var(--d) linear infinite forwards;
 }
