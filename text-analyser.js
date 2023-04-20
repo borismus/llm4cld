@@ -1,11 +1,19 @@
-import {isCausalLink} from './openai.js';
+import {explainCausalLink, isCausalLink} from './openai.js';
 
 export class TextAnalyser {
-  constructor(grounding) {
+  constructor(grounding, {includeExplanation = true} = {}) {
     this.grounding = grounding;
+    this.includeExplanation = includeExplanation;
+    this.isCancelling = false;
+  }
+
+  cancel() {
+    this.isCancelling = true;
   }
 
   async evaluateCausalLinksBetweenEntities(entities, {linksCallback = null} = {}) {
+    this.isCancelling = false;
+
     const links = [];
     for (const ent1 of entities) {
       for (const ent2 of entities) {
@@ -13,25 +21,60 @@ export class TextAnalyser {
         if (ent1 === ent2) {
           continue;
         }
+        if (this.isCancelling) {
+          return;
+        }
 
         const block1 = `${ent1}`;
         const block2 = `${ent2}`;
-        const isLink = await isCausalLink(this.grounding, block1, block2, {isOpposite: false});
-        if (isLink) {
-          links.push({from: ent1, to: ent2, isOpposite: false});
-          linksCallback(links);
+        let isLink = false;
+        let isOppositeLink = false;
+        try {
+          isLink = await isCausalLink(this.grounding, block1, block2, {isOpposite: false});
+          if (isLink) {
+            links.push({
+              from: ent1,
+              to: ent2,
+              isOpposite: false,
+              explanation: await this.explainIfNeeded(ent1, ent2, false),
+            });
+            linksCallback(links);
+          }
+        } catch (e) {
+          console.error(e);
         }
-        const isOppositeLink = await isCausalLink(this.grounding, block1, block2, {
-          isOpposite: true
-        });
-        if (isOppositeLink) {
-          links.push({from: ent1, to: ent2, isOpposite: true});
-          linksCallback(links);
+
+        try {
+          isOppositeLink = await isCausalLink(this.grounding, block1, block2, {
+            isOpposite: true
+          });
+          if (isOppositeLink) {
+            links.push({
+              from: ent1,
+              to: ent2,
+              isOpposite: true,
+              explanation: await this.explainIfNeeded(ent1, ent2, true),
+            });
+            linksCallback(links);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
+        // Sanity check: flag if we have both a causal and opposite causal link.
+        if (isLink && isOppositeLink) {
+          console.error(`Reasoning error. We have reached a logical contradiction.`);
         }
       }
     }
     return links;
   }
 
+  async explainIfNeeded(ent1, ent2, isOpposite) {
+    if (!this.includeExplanation) {
+      return null;
+    }
+    return await explainCausalLink(this.grounding, ent1, ent2, isOpposite);
+  }
 }
 
