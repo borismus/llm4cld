@@ -18,10 +18,11 @@ export async function isCausalLink(groundingText, entity1, entity2, {isOpposite 
     generateCausalLinkPrompt(groundingText, entity1, entity2);
 
   const gptRes = await callGPT4(prompt);
+  const lowerGptRes = gptRes.toLowerCase();
 
   // Parse response into a boolean.
   let res = null;
-  switch (gptRes) {
+  switch (lowerGptRes) {
     case 'true':
       res = true;
       break;
@@ -94,20 +95,25 @@ function generateExplainLinkPrompt(groundingText, entity1, entity2, isOpposite) 
   const adverb = isOpposite ? 'less' : 'more';
   return `Text: ${groundingText}
 
-The text above suggests that more ${entity1} causes ${adverb} ${entity2}. In one sentence, explain why.`;
+The text above suggests that more ${entity1} causes ${adverb} ${entity2}. In one short sentence, explain why.`;
 }
 
 function cleanupEntity(ent) {
+  console.info('cleanupEntity', ent);
   // Usually in the form of a bulleted or numbered list, eg ("30. Foo" or "- Bar").
 
   // First check for bullets.
   if (ent.startsWith('- ')) {
     return ent.substring(2);
   }
-  // Otherwise its numbered.
+  // Might also be numbered.
   const match = ent.match(/^[0-9]+\. (.*)$/);
   if (match !== null) {
     return match[1];
+  }
+  // If there no prefix, and it starts with a capital, let it through.
+  if (ent.match(/^[A-Z].*$/)) {
+    return ent;
   }
   throw new Error(`Entity not in recognized format: "${ent}"`)
 }

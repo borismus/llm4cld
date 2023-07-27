@@ -69,6 +69,7 @@ window.extractEntities = async () => {
   console.log('extractEntities');
 
   setContentEditableLoading(entitiesEl, true);
+  updateEntities([]);
   const entities = await extractEntities(systemDescriptionEl.innerText, 8);
   updateEntities(entities);
   setContentEditableLoading(entitiesEl, false);
@@ -80,6 +81,7 @@ async function evaluateLinks() {
   const entities = entitiesEl.innerText.trim().split('\n');
   analyser = new TextAnalyser(systemDescriptionEl.innerText);
 
+  updateCGML('');
   setContentEditableLoading(cgmlEl, true);
   const links = await analyser.evaluateCausalLinksBetweenEntities(entities, {
     linksCallback: (links) => {

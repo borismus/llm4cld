@@ -13,27 +13,30 @@
 
 <body>
   <div class="left">
+    <h1>System Description ⮕ Causal Graph</h1>
     <section id="openai">
-      <label for="openai-key">OpenAI Key</label>
+      <label for="openai-key">0. OpenAI Key</label>
       <input type="text" id="openai-key" name="openai-key" placeholder="openai key"></input>
     </section>
 
     <section id="description">
-      <div contenteditable id="system-description" placeholder="text description of a complex system"></div>
+      <label for="system-description">1. Provide a description of a complex system:</label>
+      <div contenteditable id="system-description" placeholder="Placeholder for description of complex system"></div>
       <div>
-        <button onclick="extractEntities()">Extract Entities</button>
+        <button onclick="extractEntities()" title="Click me to extract relevant entities from the description above.">2. Extract Entities</button>
       </div>
     </section>
 
     <section id="entities">
-      <div contenteditable id="entity-list" placeholder="entities in the system above"></div>
+      <label for="entity-list">3. Prune or add to the list of entities below:</label>
+      <div contenteditable id="entity-list" placeholder="Placeholder for entities in the system described above"></div>
       <div>
-        <button onclick="toggleEvaluateLinks(this)">Evaluate Links</button>
+        <button onclick="toggleEvaluateLinks(this)" title="Click me to generate a causal graph for the entities and system description above.">4. Evaluate Links</button>
       </div>
     </section>
 
     <section id="graph">
-      <div contenteditable id="cgml" placeholder="causal graph for the system above"></div>
+      <div contenteditable id="cgml" placeholder="Placeholder for a causal graph for the system above"></div>
     </section>
   </div>
   <div class="right">
