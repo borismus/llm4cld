@@ -63,7 +63,7 @@ export class TextAnalyser {
 
         // Sanity check: flag if we have both a causal and opposite causal link.
         if (isLink && isOppositeLink) {
-          console.error(`Reasoning error. We have reached a logical contradiction.`);
+          console.error(`Reasoning error: we have both a link and an inverse link. A logical contradiction!`);
         }
       }
     }
