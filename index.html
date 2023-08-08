@@ -20,24 +20,25 @@
     </section>
 
     <section id="description">
-      <label for="system-description">1. Provide a description of a complex system:</label>
+      <label for="system-description">Provide a description of a complex system:</label>
       <div contenteditable id="system-description" placeholder="Placeholder for description of complex system"></div>
-      <div>
-        <button onclick="extractEntities()" title="Click me to extract relevant entities from the description above.">2. Extract Entities</button>
-      </div>
     </section>
 
+    <button onclick="extractEntities()" title="Click me to extract relevant entities from the description above.">1. Extract Entities</button>
+
     <section id="entities">
-      <label for="entity-list">3. Prune or add to the list of entities below:</label>
+      <label for="entity-list">Prune or add to the list of entities below:</label>
       <div contenteditable id="entity-list" placeholder="Placeholder for entities in the system described above"></div>
-      <div>
-        <button onclick="toggleEvaluateLinks(this)" title="Click me to generate a causal graph for the entities and system description above.">4. Evaluate Links</button>
-      </div>
     </section>
+
+    <button onclick="toggleEvaluateLinks(this)" title="Click me to generate a causal graph for the entities and system description above.">2. Evaluate Links</button>
 
     <section id="graph">
       <div contenteditable id="cgml" placeholder="Placeholder for a causal graph for the system above"></div>
     </section>
+
+    <button onclick="copyURL()" title="Copy the URL to share with others.">3. Copy URL</button>
+
   </div>
   <div class="right">
     <causal-graph noTextarea="true"></causal-graph>

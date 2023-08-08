@@ -2,6 +2,7 @@ import {GROUNDING, INTERESTING_ENTITIES} from './constants.js';
 import {extractEntities} from './openai.js';
 import {OPENAI_KEY} from './secret.js';
 import {TextAnalyser} from './text-analyser.js';
+import {updateURL, getParamsFromURL, stringToList, listToString} from './url.js';
 
 const openAiKeyEl = document.querySelector('#openai-key');
 const systemDescriptionEl = document.querySelector('#system-description');
@@ -11,10 +12,39 @@ const graphEl = document.querySelector('causal-graph');
 
 export function initializeUI() {
   openAiKeyEl.value = OPENAI_KEY;
-  systemDescriptionEl.innerText = GROUNDING;
+  updateDescription(GROUNDING);
   updateEntities(INTERESTING_ENTITIES);
 
+  // Populate input boxes with values from GET params.
+  const params = getParamsFromURL();
+  for (const key in params) {
+    const value = params[key];
+    switch (key) {
+      case 'desc':
+        updateDescription(value);
+        break;
+      case 'ents':
+        updateEntities(stringToList(value));
+        break;
+      case 'cgml':
+        updateCGML(value);
+        break;
+      default:
+        console.error(`Unknown param: ${key}.`);
+    }
+  }
+
   cgmlEl.addEventListener('input', renderGraph);
+
+  systemDescriptionEl.addEventListener('input', () => updateURL({
+    desc: systemDescriptionEl.innerText
+  }));
+  entitiesEl.addEventListener('input', () => updateURL({
+    ents: entitiesEl.innerText.replaceAll('\n', ';')
+  }));
+  cgmlEl.addEventListener('input', () => updateURL({
+    cgml: cgmlEl.innerText
+  }));
 }
 
 function setContentEditableLoading(contentEditableEl, isLoading) {
@@ -26,7 +56,11 @@ function setContentEditableLoading(contentEditableEl, isLoading) {
   contentEditableEl.setAttribute('contenteditable', !isLoading);
 }
 
-function updateEntities(entityList) {
+export function updateDescription(description) {
+  systemDescriptionEl.innerText = description;
+}
+
+export function updateEntities(entityList) {
   entitiesEl.innerText = '';
   for (const entity of entityList) {
     entitiesEl.innerText += entity + '\n';
@@ -52,7 +86,7 @@ function createCGML(links) {
   return cgml;
 }
 
-function updateCGML(cgml) {
+export function updateCGML(cgml) {
   if (!cgml) {
     graphEl.cgml = '';
   }
@@ -109,4 +143,14 @@ window.toggleEvaluateLinks = (buttonEl) => {
 window.renderGraph = async () => {
   console.log('renderGraph');
   graphEl.cgml = cgmlEl.innerText;
+}
+
+window.copyURL = () => {
+  let url = document.location.href;
+
+  navigator.clipboard.writeText(url).then(() => {
+    console.log('Copied!');
+  }, function () {
+    console.log('Copy error')
+  });
 }

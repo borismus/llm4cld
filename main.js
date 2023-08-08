@@ -1,13 +1,11 @@
+import {CausalGraphElement} from './deps/causal-graph-tools/causal-graph-element.js';
+
 // import {extractEntities, isCausalLink} from './macromaker.js';
 import {callGPT4, extractEntities, isCausalLink} from './openai.js';
 import {initializeUI} from './ui.js';
-import {CausalGraphElement} from './deps/causal-graph-tools/causal-graph-element.js';
-
 
 
 async function main() {
-  // Populate input boxes with default values.
-
 
   let sgml = '';
   // isCausalLink(GROUNDING, 'more chickens', 'more pain');

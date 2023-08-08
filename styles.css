@@ -24,7 +24,7 @@ h1, label, button {
 section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1em;
+  margin: 1em 0;
 }
 
 input#openai-key {
