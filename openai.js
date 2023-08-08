@@ -38,7 +38,7 @@ export async function isCausalLink(groundingText, entity1, entity2, {isOpposite 
   return res;
 }
 
-export async function explainCausalLink(groundingText, entity1, entity2, {isOpposite = false} = {}) {
+export async function explainCausalLink(groundingText, entity1, entity2, isOpposite = false) {
   const prompt = generateExplainLinkPrompt(groundingText, entity1, entity2, isOpposite);
   const gptRes = await callGPT4(prompt);
   return gptRes;

@@ -9,11 +9,10 @@ const systemDescriptionEl = document.querySelector('#system-description');
 const entitiesEl = document.querySelector('#entity-list');
 const cgmlEl = document.querySelector('#cgml');
 const graphEl = document.querySelector('causal-graph');
+const statusEl = document.querySelector('#status');
 
 export function initializeUI() {
   openAiKeyEl.value = OPENAI_KEY;
-  updateDescription(GROUNDING);
-  updateEntities(INTERESTING_ENTITIES);
 
   // Populate input boxes with values from GET params.
   const params = getParamsFromURL();
@@ -33,18 +32,28 @@ export function initializeUI() {
         console.error(`Unknown param: ${key}.`);
     }
   }
+  if (!params.ents) {
+    updateEntities(INTERESTING_ENTITIES);
+  }
+  if (!params.desc) {
+    updateDescription(GROUNDING);
+  }
 
-  cgmlEl.addEventListener('input', renderGraph);
-
+  // Update URL in response to user-initiated changes to textboxes.
   systemDescriptionEl.addEventListener('input', () => updateURL({
     desc: systemDescriptionEl.innerText
   }));
-  entitiesEl.addEventListener('input', () => updateURL({
-    ents: entitiesEl.innerText.replaceAll('\n', ';')
-  }));
-  cgmlEl.addEventListener('input', () => updateURL({
-    cgml: cgmlEl.innerText
-  }));
+  entitiesEl.addEventListener('input', () => {
+    updateURL({
+      ents: entitiesEl.innerText.replaceAll('\n', ';')
+    })
+  });
+  cgmlEl.addEventListener('input', () => {
+    renderGraph();
+    updateURL({
+      cgml: cgmlEl.innerText
+    })
+  });
 }
 
 function setContentEditableLoading(contentEditableEl, isLoading) {
@@ -67,6 +76,9 @@ export function updateEntities(entityList) {
   }
   // Ensure that we don't have trailing newlines.
   entitiesEl.innerText = entitiesEl.innerText.trim();
+
+  // Update URL in response to programatic updates of entities.
+  updateURL({ents: entitiesEl.innerText.replaceAll('\n', ';')});
 }
 
 function createCGML(links) {
@@ -94,6 +106,9 @@ export function updateCGML(cgml) {
 
   // Re-render the graph using CGML.js.
   graphEl.cgml = cgml;
+
+  // Update URL responding to CGML updates.
+  updateURL({cgml: cgmlEl.innerText});
 }
 
 
@@ -101,12 +116,16 @@ export function updateCGML(cgml) {
 // DOM Event handlers.
 window.extractEntities = async () => {
   console.log('extractEntities');
+  const entityCount = 5;
+  updateStatus(`Extracting ${entityCount} entities...`);
 
   setContentEditableLoading(entitiesEl, true);
+  updateCGML('');
   updateEntities([]);
-  const entities = await extractEntities(systemDescriptionEl.innerText, 8);
+  const entities = await extractEntities(systemDescriptionEl.innerText, entityCount);
   updateEntities(entities);
   setContentEditableLoading(entitiesEl, false);
+  updateStatus('');
 };
 
 let analyser = null;
@@ -124,11 +143,19 @@ async function evaluateLinks() {
     }
   });
   setContentEditableLoading(cgmlEl, false);
+  updateStatus('');
 }
 
 function pauseEvaluatingLinks() {
   analyser.cancel();
   analyser = null;
+}
+
+function updateStatusBriefly(text, durationSeconds = 3) {
+  updateStatus(text);
+  setTimeout(() => {
+    updateStatus('');
+  }, durationSeconds * 1000);
 }
 
 window.toggleEvaluateLinks = (buttonEl) => {
@@ -140,7 +167,7 @@ window.toggleEvaluateLinks = (buttonEl) => {
   }
 }
 
-window.renderGraph = async () => {
+window.renderGraph = () => {
   console.log('renderGraph');
   graphEl.cgml = cgmlEl.innerText;
 }
@@ -149,8 +176,12 @@ window.copyURL = () => {
   let url = document.location.href;
 
   navigator.clipboard.writeText(url).then(() => {
-    console.log('Copied!');
+    updateStatusBriefly('Copied link!');
   }, function () {
-    console.log('Copy error')
+    updateStatusBriefly('Copy error.');
   });
+}
+
+window.updateStatus = (text) => {
+  statusEl.innerText = text;
 }

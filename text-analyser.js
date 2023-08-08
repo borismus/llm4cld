@@ -30,6 +30,7 @@ export class TextAnalyser {
         let isLink = false;
         let isOppositeLink = false;
         try {
+          updateStatus(`Checking if more ${ent1} causes more ${ent2}?`);
           isLink = await isCausalLink(this.grounding, block1, block2, {isOpposite: false});
           if (isLink) {
             links.push({
@@ -45,6 +46,7 @@ export class TextAnalyser {
         }
 
         try {
+          updateStatus(`Checking if more ${ent1} causes less ${ent2}?`);
           isOppositeLink = await isCausalLink(this.grounding, block1, block2, {
             isOpposite: true
           });

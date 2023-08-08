@@ -2,9 +2,12 @@ body {
   display: flex;
   flex-direction: row;
   margin: 0;
+  overflow: hidden;
 }
 
-h1, label, button {
+h1,
+label,
+button {
   font-family: 'Rubik';
 }
 
@@ -35,7 +38,8 @@ input#openai-key {
   opacity: 0.5;
 }
 
-[contenteditable], input {
+[contenteditable],
+input {
   font-family: 'Inconsolata', monospace;
   font-size: 14px;
   line-height: 16px;
@@ -94,4 +98,23 @@ section [contenteditable] {
 .anim-border {
   border-image: conic-gradient(from var(--angle), var(--c2), var(--c1) 0.1turn, var(--c1) 0.15turn, var(--c2) 0.25turn) 30;
   animation: borderRotate var(--d) linear infinite forwards;
+}
+
+#status {
+  font-family: 'Rubik';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 1em;
+  background: rgba(0, 255, 26, 0.3);
+  border-radius: 10px 0 0 0;
+  max-width: 300px;
+}
+
+#status:empty {
+  display: none;
+}
+
+#status::before {
+  content: 'Status: ';
 }
