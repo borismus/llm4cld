@@ -5,15 +5,25 @@ body {
   overflow: hidden;
 }
 
-h1, h2,
+h1,
+h2,
 label,
 button {
   font-family: 'Rubik';
 }
 
+button#toggle-evaluate-links:after {
+  content: '2. Evaluate Links';
+}
+
+button#toggle-evaluate-links.running:after {
+  content: '[Pause Evaluation]';
+}
+
 h1 {
   margin-bottom: 0;
 }
+
 h2 {
   margin-top: 0;
   font-size: 18px;

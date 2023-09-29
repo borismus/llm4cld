@@ -158,12 +158,15 @@ function updateStatusBriefly(text, durationSeconds = 3) {
   }, durationSeconds * 1000);
 }
 
-window.toggleEvaluateLinks = (buttonEl) => {
+window.toggleEvaluateLinks = async (buttonEl) => {
   const isEvaluatingLinks = (analyser !== null);
   if (isEvaluatingLinks) {
     pauseEvaluatingLinks();
+    buttonEl.classList.remove('running');
   } else {
-    evaluateLinks();
+    buttonEl.classList.add('running');
+    await evaluateLinks();
+    buttonEl.classList.remove('running');
   }
 }
 
