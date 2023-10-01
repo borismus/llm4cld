@@ -1,3 +1,5 @@
+import {CausalGraphElement} from './deps/causal-graph-tools/causal-graph-element.js';
+
 import {initializeUI} from './ui.js';
 
 
