@@ -1,6 +1,5 @@
 import {GROUNDING, INTERESTING_ENTITIES} from './constants.js';
 import {extractEntities} from './openai.js';
-import {OPENAI_KEY} from './secret.js';
 import {TextAnalyser} from './text-analyser.js';
 import {updateURL, getParamsFromURL, stringToList, listToString} from './url.js';
 
@@ -11,8 +10,12 @@ const cgmlEl = document.querySelector('#cgml');
 const graphEl = document.querySelector('causal-graph');
 const statusEl = document.querySelector('#status');
 
+openAiKeyEl.onblur = (e) => {
+  localStorage.setItem('openai_key', e.target.value);
+}
+
 export function initializeUI() {
-  openAiKeyEl.value = OPENAI_KEY;
+  openAiKeyEl.value = localStorage.getItem('openai_key');
 
   // Populate input boxes with values from GET params.
   const params = getParamsFromURL();
@@ -32,12 +35,14 @@ export function initializeUI() {
         console.error(`Unknown param: ${key}.`);
     }
   }
-  if (!params.ents) {
-    updateEntities(INTERESTING_ENTITIES);
-  }
-  if (!params.desc) {
-    updateDescription(GROUNDING);
-  }
+
+  // Provide some defaults, if none are set.
+  // if (!params.ents) {
+  //   updateEntities(INTERESTING_ENTITIES);
+  // }
+  // if (!params.desc) {
+  //   updateDescription(GROUNDING);
+  // }
 
   // Update URL in response to user-initiated changes to textboxes.
   systemDescriptionEl.addEventListener('input', () => updateURL({
