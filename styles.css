@@ -49,9 +49,10 @@ section {
   margin: 1em 0;
 }
 
-input#openai-key {
+/* For secrecy, when doing a screencast or presentation */
+/* input#openai-key {
   filter: blur(2px);
-}
+} */
 
 [placeholder]:empty {
   opacity: 0.5;

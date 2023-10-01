@@ -1,7 +1,6 @@
 const ENDPOINT_URL = 'https://us-central1-musemuse.cloudfunctions.net/openai_complete';
 import {DEFAULT_TEMPERATURE} from './constants.js';
 // const ENDPOINT_URL = 'http://localhost:8080';
-import {OPENAI_KEY} from './secret.js';
 
 export async function extractEntities(groundingText, entityCount = 5) {
   const prompt = generateExtractEntitiesPrompt(groundingText, entityCount);
@@ -48,8 +47,14 @@ export async function callGPT4(prompt, {verbose = true} = {}) {
   if (!prompt) {
     throw new Error(`Prompt required.`);
   }
+  const openAiKey = localStorage.getItem('openai_key');
+  if (!openAiKey) {
+    alert(`Please paste your OpenAI key into the first input element.`);
+    throw new Error(`No OpenAI key specified.`);
+  }
   const request = {
-    openai_key: OPENAI_KEY,
+    // Assume the key is saved in storage by this point.
+    openai_key: openAiKey,
     model: 'gpt-4',
     temperature: DEFAULT_TEMPERATURE,
     prompt,
@@ -60,6 +65,11 @@ export async function callGPT4(prompt, {verbose = true} = {}) {
   const start = performance.now();
   const res = await fetch(ENDPOINT_URL + '?' + new URLSearchParams(request));
   const duration = performance.now() - start;
+
+  if (res.status !== 200) {
+    alert(`Error calling GPT. See console.`);
+    throw new Error(`Error calling GPT: ${res.text}`);
+  }
 
   const text = await res.text();
   if (verbose) {

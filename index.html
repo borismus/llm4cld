@@ -16,26 +16,26 @@
     <h1>LLM4CLD</h1>
     <h2>System Description ⮕ Causal Loop Diagram</h2>
     <section id="openai">
-      <label for="openai-key">0. OpenAI Key</label>
+      <label for="openai-key">OpenAI Key</label>
       <input type="text" id="openai-key" name="openai-key" placeholder="openai key"></input>
     </section>
 
     <section id="description">
       <label for="system-description">Provide a description of a complex system:</label>
-      <div contenteditable id="system-description" placeholder="Placeholder for description of complex system"></div>
+      <div contenteditable id="system-description" placeholder="A description of your complex system"></div>
     </section>
 
     <button onclick="extractEntities()" title="Click me to extract relevant entities from the description above.">1. Extract Entities</button>
 
     <section id="entities">
       <label for="entity-list">Prune or add to the list of entities below:</label>
-      <div contenteditable id="entity-list" placeholder="Placeholder for entities in the system described above"></div>
+      <div contenteditable id="entity-list" placeholder="The entities in the system described above"></div>
     </section>
 
     <button id="toggle-evaluate-links" onclick="toggleEvaluateLinks(this)" title="Click me to generate a causal graph for the entities and system description above."></button>
 
     <section id="graph">
-      <div contenteditable id="cgml" placeholder="Placeholder for a causal graph for the system above"></div>
+      <div contenteditable id="cgml" placeholder="The causal graph for the system described above"></div>
     </section>
 
     <button onclick="copyURL()" title="Copy the URL to share with others.">3. Copy URL</button>
