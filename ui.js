@@ -81,15 +81,21 @@ export function updateEntities(entityList) {
   updateURL({ents: entitiesEl.innerText.replaceAll('\n', ';')});
 }
 
-function createCGML(links) {
+function createCGML(links, edgeLabels = true) {
   let cgml = '';
   for (const {from, to, isOpposite, explanation} of links) {
     const arrow = isOpposite ? 'o->' : '-->';
-    const relation = `${from} ${arrow} ${to}\n`;
+    const relation = `${from} ${arrow} ${to}`;
+
     if (explanation) {
-      cgml += `// ${explanation}\n`;
+      if (edgeLabels) {
+        cgml += `${relation} // ${splitAboutEveryNCharsPreservingWords(explanation, 20)}\n`;
+      } else {
+        cgml += `// ${explanation}\n${relation}\n`;
+      }
+    } else {
+      cgml += relation + '\n';
     }
-    cgml += relation;
     // Add a newline for readability if we've included an explanation.
     if (explanation) {
       cgml += '\n'
@@ -126,6 +132,7 @@ window.extractEntities = async () => {
   updateEntities(entities);
   setContentEditableLoading(entitiesEl, false);
   updateStatus('');
+  analyser = null;
 };
 
 let analyser = null;
@@ -156,6 +163,25 @@ function updateStatusBriefly(text, durationSeconds = 3) {
   setTimeout(() => {
     updateStatus('');
   }, durationSeconds * 1000);
+}
+
+function splitAboutEveryNCharsPreservingWords(text, maxCharsPerLine = 40) {
+  const words = text.split(' ');
+  const lines = [];
+  let charCount = 0;
+  let line = '';
+  for (const word of words) {
+    if (charCount > maxCharsPerLine) {
+      lines.push(line);
+      line = '';
+      charCount = 0;
+    }
+    line += word + ' ';
+    charCount += word.length + 1;
+  }
+  lines.push(line);
+  // return text;
+  return lines.join('\\n');
 }
 
 window.toggleEvaluateLinks = async (buttonEl) => {

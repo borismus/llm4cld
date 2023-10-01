@@ -95,7 +95,7 @@ function generateExplainLinkPrompt(groundingText, entity1, entity2, isOpposite) 
   const adverb = isOpposite ? 'less' : 'more';
   return `Text: ${groundingText}
 
-The text above suggests that more ${entity1} causes ${adverb} ${entity2}. In one short sentence, explain why.`;
+The text above suggests that more ${entity1} causes ${adverb} ${entity2}. Explain why in fewer than ten words.`;
 }
 
 function cleanupEntity(ent) {
