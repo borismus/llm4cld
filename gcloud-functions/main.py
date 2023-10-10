@@ -81,7 +81,8 @@ def openai_complete(request):
         model=args['model'],
         temperature=temperature,
         messages=[
-            {"role": "system", "content": "You are Jay Wright Forrester, an expert in system dynamics."},
+            # Removed this message to be more generic.
+            # {"role": "system", "content": "You are Jay Wright Forrester, an expert in system dynamics."},
             {"role": "user", "content": args['prompt']}
         ]
     )
