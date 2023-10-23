@@ -25,14 +25,16 @@
       <div contenteditable id="system-description" placeholder="A description of your complex system"></div>
     </section>
 
-    <button onclick="extractEntities()" title="Click me to extract relevant entities from the description above.">1. Extract Entities</button>
+    <button onclick="extractEntities()" title="Click me to extract relevant entities from the description above.">1.
+      Extract Entities</button>
 
     <section id="entities">
       <label for="entity-list">Prune or add to the list of entities below:</label>
       <div contenteditable id="entity-list" placeholder="The entities in the system described above"></div>
     </section>
 
-    <button id="toggle-evaluate-links" onclick="toggleEvaluateLinks(this)" title="Click me to generate a causal graph for the entities and system description above."></button>
+    <button id="toggle-evaluate-links" onclick="toggleEvaluateLinks(this)"
+      title="Click me to generate a causal graph for the entities and system description above."></button>
 
     <section id="graph">
       <div contenteditable id="cgml" placeholder="The causal graph for the system described above"></div>
@@ -45,4 +47,14 @@
     <div id="status"></div>
     <causal-graph noTextarea="true"></causal-graph>
   </div>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PR6HZ335BW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PR6HZ335BW');
+  </script>
 </body>
